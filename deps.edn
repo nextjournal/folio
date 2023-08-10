@@ -1,0 +1,12 @@
+{:paths ["src"]
+ :deps {org.clojure/clojure {:mvn/version "1.11.1"}
+        reagent/reagent {:mvn/version "1.2.0"}
+        io.github.nextjournal/command-bar {:git/sha "202e01d98371c3780a34f08a4def1958d5b87964"
+                                           #_#_:local/root "/Users/philippamarkovics/Work/command-bar"}}
+ :aliases
+ {:demo {:extra-paths ["demo"]
+         :extra-deps {io.github.nextjournal/clerk {:git/sha "1683b8255bb3d109e45e4189108269b8258504d3"}
+                      io.github.nextjournal/clerk.render {:git/url "https://github.com/nextjournal/clerk"
+                                                          ;; make sure this sha matches the one in `:deps` above.
+                                                          :git/sha "1683b8255bb3d109e45e4189108269b8258504d3"
+                                                          :deps/root "render"}}}}}
