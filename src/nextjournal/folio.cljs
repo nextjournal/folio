@@ -165,7 +165,7 @@
 (defn split [& content]
   (into [:div.grid {:class (str "grid-cols-" (count (remove nil? content)))}] content))
 
-(defn editor [{:as state :keys [commands]}]
+(defn editor [{:as state :keys [doc commands]}]
   (let [editor-el (react/useRef nil)
         [editor-view set-editor-view!] (react/useState nil)]
     (react/useEffect
@@ -173,7 +173,7 @@
        (let [editor-view* (make-view (make-state state) (.-current editor-el))]
          (set-editor-view! editor-view*)
          #(.destroy editor-view*)))
-     #js[])
+     #js[doc])
     (use-dark-mode editor-view)
     [:<>
      [:div.bg-slate-200.border-r.border-slate-300.dark:border-slate-600.px-4.py-3.dark:bg-slate-950.overflow-y-auto.relative
