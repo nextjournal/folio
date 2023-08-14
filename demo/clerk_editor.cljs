@@ -240,14 +240,14 @@
                                                     (swap! !state assoc :describe-key/spec spec))))
                                  :on-key-up (fn [event]
                                               (when-let [spec (:describe-key/spec @!state)]
-                                                (when-let [binding (command-bar/get-binding-from-spec spec)]
+                                                (when-let [binding (command-bar/get-binding-by-spec spec)]
                                                   (swap! !eval-result assoc :result (reagent/as-element [key-description binding])))
                                                 (swap! !state dissoc :describe-key/spec)
                                                 (command-bar/kill-interactive!)))}]])))
 
 (defn editor []
-  (let [!state (hooks/use-state {:commands {"Alt-d" #'describe-key
-                                            "Shift-Alt-d" #'doc}
+  (let [!state (hooks/use-state {:commands {:describe-key {:binding "Alt-d" :run describe-key}
+                                            :doc {:binding "Shift-Alt-d" :run doc}}
                                  :doc ""
                                  :on-change-selection #(reset! !eval-result nil)
                                  :on-eval-doc #(reset! !notebook (eval-notebook %))

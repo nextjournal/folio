@@ -1,7 +1,7 @@
 {:paths ["src"]
  :deps {org.clojure/clojure {:mvn/version "1.11.1"}
         reagent/reagent {:mvn/version "1.2.0"}
-        io.github.nextjournal/command-bar {:git/sha "ddf794a42c2cbc30f80c7335a0cbe44eac0491c2"
+        io.github.nextjournal/command-bar {:git/sha "35035c138cd51078997d6b991e29549359946471"
                                            #_#_:local/root "/Users/philippamarkovics/Work/command-bar"}}
  :aliases
  {:demo {:extra-paths ["demo"]
