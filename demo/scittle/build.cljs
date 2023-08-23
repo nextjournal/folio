@@ -9,7 +9,6 @@
             [shadow.esm :refer [dynamic-import]]
             [sci.configs.applied-science.js-interop :as sci.configs.js-interop]
             [reagent.core]
-
             ;; FIXME: folio runtime dependencies, what to do with these
             [nextjournal.command-bar]
             [nextjournal.folio.localstorage]
@@ -17,36 +16,37 @@
             [nextjournal.clojure-mode.extensions.eval-region]
             [nextjournal.clojure-mode.keymap]))
 
-(swap! scit/!sci-ctx
-       sci/merge-opts {:namespaces (merge
-                                    sci.configs.js-interop/namespaces
-                                    (sci-copy-nss
-                                     'reagent.core
-                                     'nextjournal.clojure-mode
-                                     'nextjournal.clojure-mode.extensions.eval-region
-                                     'nextjournal.clojure-mode.keymap
-                                     'nextjournal.command-bar
-                                     'nextjournal.folio.localstorage))
+(defn async-load-fn [{:keys [ctx libname opts ns]}]
+  (if (string? libname)
+    (.then (dynamic-import libname)
+           (fn [mod]
+             (let [{:keys [as refer]} opts]
+               (cond
+                 as (do
+                      (sci/add-class! ctx libname mod)
+                      (sci/add-import! ctx ns libname as))
+                 refer (doseq [sym refer]
+                         (let [sub-mod (j/get mod (str sym))
+                               sub-name (symbol (str libname "$" sym))]
+                           (sci/add-class! ctx sub-name sub-mod)
+                           (sci/add-import! ctx ns sub-name sym)))
+                 :else (js/console.warn
+                        (str "Import of '" libname "' requires :as or :refer terms.")))
+               {:handled true})))
+    (do (js/console.error :missing-ns libname)
+        {:handled false})))
 
-                       :async-load-fn (fn [{:keys [ctx libname opts ns]}]
-                                        (if (string? libname)
-                                          (.then (dynamic-import libname)
-                                                 (fn [mod]
-                                                   (let [{:keys [as refer]} opts]
-                                                     (cond
-                                                       as (do
-                                                            (sci/add-class! ctx libname mod)
-                                                            (sci/add-import! ctx ns libname as))
-                                                       refer (doseq [sym refer]
-                                                               (let [sub-mod (j/get mod (str sym))
-                                                                     sub-name (symbol (str libname "$" sym))]
-                                                                 (sci/add-class! ctx sub-name sub-mod)
-                                                                 (sci/add-import! ctx ns sub-name sym)))
-                                                       :else (js/console.warn
-                                                              (str "Import of '" libname "' requires :as or :refer terms.")))
-                                                     {:handled true})))
-                                          (do (js/console.error :missing-ns libname)
-                                              {:handled false})))})
+(def sci-opts
+  {:async-load-fn async-load-fn
+   :namespaces (merge
+                sci.configs.js-interop/namespaces
+                (sci-copy-nss
+                 'reagent.core
+                 'nextjournal.clojure-mode
+                 'nextjournal.clojure-mode.extensions.eval-region
+                 'nextjournal.clojure-mode.keymap
+                 'nextjournal.command-bar
+                 'nextjournal.folio.localstorage))})
 
 (defn eval-string-async [txt]
   (.. (scia/eval-string* @scit/!sci-ctx txt)
@@ -69,18 +69,25 @@
           (eval-string-async code-str))
       (throw (js/Error "Cant't get tag source")))))
 
-(defn eval-script-tags [{:keys [p tags]}]
+(defn eval-script-tags* [{:keys [p tags]}]
   (.. p
       (then (fn [res]
               (js/console.log :res res)
               (if-some [t (first tags)]
-                (eval-script-tags {:tags (rest tags) :p (eval-promise t)})
+                (eval-script-tags* {:tags (rest tags) :p (eval-promise t)})
                 (js/console.log :done))))
       (catch (fn [err] (js/console.error :halting err)))))
 
 ;; this ends up rebuilding the whole scit
-(set! scit/eval-script-tags
-      (fn []
-        (let [script-tags (js/document.querySelectorAll "script[type='application/x-scittle']")]
-          (eval-script-tags {:tags script-tags
-                             :p (js/Promise.resolve :init)}))))
+(defn eval-script-tags []
+  (let [script-tags (js/document.querySelectorAll "script[type='application/x-scittle']")]
+    (eval-script-tags* {:tags script-tags
+                        :p (js/Promise.resolve :init)})))
+
+;; use scittle.core
+(set! scit/eval-script-tags eval-script-tags)
+(swap! scit/!sci-ctx sci/merge-opts sci-opts)
+
+;; test standalone
+;;(scit/disable-auto-eval)
+;;(js/document.addEventListener "DOMContentLoaded" (fn [] (js/console.log :loaded) (eval-script-tags)) false)
