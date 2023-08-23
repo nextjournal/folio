@@ -7,9 +7,22 @@
                  :output-dir "public/js"
                  :asset-path "js"
                  :modules {:main {:init-fn clerk-editor/render}}}
-          :scittle {:compiler-options {:output-feature-set :es8}
+          :scittle {:closure-defines {goog.DEBUG true goog.ENABLE_DEBUG_LOADER true}
                     :target :esm
                     :runtime :browser
                     :output-dir "scittle/js"
+                    :release {:output-dir "scittle/release"}
                     :asset-path "js"
-                    :modules {:scittle-build {:entries [scittle.build]}}}}}
+                    :modules {:scittle-build {:entries [scittle.build]}}
+                    :compiler-options {:output-feature-set :es8}
+                    :js-options {:keep-as-import #{"react"
+                                                   "react-dom/client"
+
+                                                   "@codemirror/commands"
+                                                   "@codemirror/language"
+                                                   "@codemirror/state"
+                                                   "@codemirror/view"
+
+                                                   ;; clerk.render.hooks
+                                                   "d3-require"
+                                                   "use-sync-external-store/shim"}}}}}

@@ -1,20 +1,21 @@
 (ns scittle.build
   (:require-macros [nextjournal.clerk.render.macros :refer [sci-copy-nss]])
-  (:require [applied-science.js-interop :as j]
+  (:require [reagent.core]                                  ;; needs to go first
+            [applied-science.js-interop :as j]
             [sci.core :as sci]
             [sci.async :as scia]
             [scittle.core :as scit]
             [scittle.impl.error :as error]
             [shadow.esm :refer [dynamic-import]]
             [sci.configs.applied-science.js-interop :as sci.configs.js-interop]
-
-            ;; FIXME: runtime dependencies, find a place eval in sci
             [reagent.core]
+
+            ;; FIXME: folio runtime dependencies, what to do with these
+            [nextjournal.command-bar]
             [nextjournal.folio.localstorage]
             [nextjournal.clojure-mode]
             [nextjournal.clojure-mode.extensions.eval-region]
-            [nextjournal.clojure-mode.keymap]
-            [nextjournal.command-bar]))
+            [nextjournal.clojure-mode.keymap]))
 
 (swap! scit/!sci-ctx
        sci/merge-opts {:namespaces (merge
@@ -75,7 +76,7 @@
               (if-some [t (first tags)]
                 (eval-script-tags {:tags (rest tags) :p (eval-promise t)})
                 (js/console.log :done))))
-      (catch (fn [err] (js/console.error :halting err )))))
+      (catch (fn [err] (js/console.error :halting err)))))
 
 ;; this ends up rebuilding the whole scit
 (set! scit/eval-script-tags

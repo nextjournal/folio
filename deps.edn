@@ -1,17 +1,16 @@
 {:paths ["src"]
  :deps {org.clojure/clojure {:mvn/version "1.11.1"}
-        reagent/reagent {:mvn/version "1.2.0"}
-        io.github.nextjournal/command-bar {:git/sha "35035c138cd51078997d6b991e29549359946471"
-                                           #_#_:local/root "/Users/philippamarkovics/Work/command-bar"}}
+        reagent/reagent {:local/root "../reagent" #_#_  :mvn/version "1.2.0"}}
  :aliases
  {:demo {:extra-paths ["demo"]
+         :jvm-opts ["-Dclojure.main.report=stdout"]
+         :main-opts ["-m" "shadow.cljs.devtools.cli"]
          :extra-deps {io.github.nextjournal/clerk {:git/sha "1683b8255bb3d109e45e4189108269b8258504d3"}
                       io.github.nextjournal/clerk.render {:git/url "https://github.com/nextjournal/clerk"
                                                           ;; make sure this sha matches the one in `:deps` above.
                                                           :git/sha "1683b8255bb3d109e45e4189108269b8258504d3"
                                                           :deps/root "render"}
 
-                      io.github.babashka/sci.configs {:git/sha "0817bbbc70c8de1af0ec8de6883a102967ad86b1"}
                       io.github.babashka/scittle {:git/sha "1bbf579241ce37bebf191792a3f7f309308276a3"
                                                   :exclusions [cljs-ajax/cljs-ajax
                                                                cljsjs/react-dom-server
