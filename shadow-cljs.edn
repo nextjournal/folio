@@ -1,8 +1,15 @@
 {:deps {:aliases [:demo]}
- :dev-http {7770 "public"}
+ :dev-http {7770 "public"
+            7771 ["scittle" "classpath:nextjournal" "classpath:scittle"]}
  :nrepl {:port 9000}
  :builds {:demo {:compiler-options {:output-feature-set :es8}
                  :target :browser
                  :output-dir "public/js"
                  :asset-path "js"
-                 :modules {:main {:init-fn clerk-editor/render}}}}}
+                 :modules {:main {:init-fn clerk-editor/render}}}
+          :scittle {:compiler-options {:output-feature-set :es8}
+                    :target :esm
+                    :runtime :browser
+                    :output-dir "scittle/js"
+                    :asset-path "js"
+                    :modules {:scittle-build {:entries [scittle.build]}}}}}

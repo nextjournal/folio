@@ -4,9 +4,7 @@
             ["@codemirror/state" :refer [Compartment EditorState RangeSet RangeSetBuilder Text]]
             ["@codemirror/view" :refer [EditorView Decoration keymap placeholder]]
             ["@lezer/highlight" :refer [tags highlightTree]]
-            ["@nextjournal/lang-clojure" :refer [clojureLanguage]]
             ["react" :as react]
-            ["react-dom/client" :as react-client]
             [applied-science.js-interop :as j]
             [nextjournal.folio.localstorage :as localstorage]
             [nextjournal.clojure-mode :as clojure-mode]
@@ -14,6 +12,8 @@
             [nextjournal.clojure-mode.keymap :as clojure-mode.keymap]
             [nextjournal.command-bar :as command-bar]
             [reagent.core :as reagent]))
+
+(reagent/set-default-compiler! (reagent/create-compiler {:function-components true}))
 
 (def bar-height 26)
 
@@ -165,7 +165,10 @@
 (defn split [& content]
   (into [:div.grid {:class (str "grid-cols-" (count (remove nil? content)))}] content))
 
+(js/console.log :react-version (.-version react))
+
 (defn editor [{:as state :keys [doc commands]}]
+
   (let [editor-el (react/useRef nil)
         [editor-view set-editor-view!] (react/useState nil)]
     (react/useEffect
