@@ -165,10 +165,8 @@
 (defn split [& content]
   (into [:div.grid {:class (str "grid-cols-" (count (remove nil? content)))}] content))
 
-(js/console.log :react-version (.-version react))
-
-(defn editor [{:as state :keys [doc commands]}]
-
+(defn editor [{:as state :keys [doc commands command-bar? fullscreen? css-class]
+               :or {fullscreen? true command-bar? true}}]
   (let [editor-el (react/useRef nil)
         [editor-view set-editor-view!] (react/useState nil)]
     (react/useEffect
@@ -180,7 +178,8 @@
     (use-dark-mode editor-view)
     [:<>
      [:div.bg-slate-200.border-r.border-slate-300.dark:border-slate-600.px-4.py-3.dark:bg-slate-950.overflow-y-auto.relative
-      {:style {:height (str "calc(100vh - " bar-height "px)")}}
-      [:div.w-full.h-screen {:ref editor-el}]]
-     [:div.fixed.left-0.bottom-0.w-screen {:style {:height bar-height}}
-      [command-bar/view (merge {} commands)]]]))
+      {:style {:height (str "calc(100vh - " bar-height "px)")} :class css-class}
+      [:div {:class (when fullscreen? "w-full h-screen") :ref editor-el}]]
+     (when command-bar?
+       [:div.fixed.left-0.bottom-0.w-screen {:style {:height bar-height}}
+        [command-bar/view (merge {} commands)]])]))
