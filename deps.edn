@@ -1,8 +1,4 @@
 {:paths ["src"]
- :deps {org.clojure/clojure {:mvn/version "1.11.1"}
-        ;; use reagent fork with string requires
-        reagent/reagent {:git/url "https://github.com/nextjournal/reagent"
-                         :git/sha "ea7195d83e53c1a3df8775b0a289c8ff3947b355"}}
  :aliases
  {:demo {:extra-paths ["demo"]
          :jvm-opts ["-Dclojure.main.report=stdout"]
@@ -12,6 +8,11 @@
                                                           ;; make sure this sha matches the one in `:deps` above.
                                                           :git/sha "1683b8255bb3d109e45e4189108269b8258504d3"
                                                           :deps/root "render"}
+
+                      ;; use reagent fork with string "react" requires to fix scittle build
+                      reagent/reagent {:git/url "https://github.com/nextjournal/reagent"
+                                       :git/sha "ea7195d83e53c1a3df8775b0a289c8ff3947b355"}
+
                       io.github.babashka/scittle {:git/sha "1bbf579241ce37bebf191792a3f7f309308276a3"
                                                   :exclusions [cljs-ajax/cljs-ajax
                                                                cljsjs/react-dom-server
