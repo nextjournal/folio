@@ -31,7 +31,7 @@ public.idea
 .idea
 .shadow-cljs
 package-lock.json
-build
 .clerk
 public/js
 scittle/js
+release

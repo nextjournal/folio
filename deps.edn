@@ -20,4 +20,8 @@
                                                                re-frame/re-frame
                                                                thheller/shadow-cljs
                                                                org.babashka/sci
-                                                               reagent/reagent]}}}}}
+                                                               reagent/reagent]}}}
+  :build
+  {:extra-paths ["build"]
+   :extra-deps {io.github.nextjournal/cas-client {:git/sha "813e9745ddeb4599ce62f3c02f329b72fe7c33ae"}
+                babashka/process {:mvn/version "0.5.21"}}}}}
