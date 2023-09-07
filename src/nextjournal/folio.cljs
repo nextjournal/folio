@@ -165,10 +165,11 @@
 (defn split [& content]
   (into [:div.grid {:class (str "grid-cols-" (count (remove nil? content)))}] content))
 
-(defn editor [{:as state :keys [doc commands command-bar? fullscreen? css-class]
+(defn editor [{:as state :keys [doc commands command-bar? fullscreen? css-class !editor-view]
                :or {fullscreen? true command-bar? true}}]
   (let [editor-el (react/useRef nil)
-        [editor-view set-editor-view!] (react/useState nil)]
+        [editor-view set-editor-view!] (or !editor-view
+                                           (react/useState nil))]
     (react/useEffect
      (fn []
        (let [editor-view* (make-view (make-state state) (.-current editor-el))]
