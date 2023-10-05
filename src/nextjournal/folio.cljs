@@ -139,15 +139,18 @@
        (.of keymap historyKeymap)
        (.of keymap clojure-mode.keymap/complete)
        (.of keymap
-            (j/lit
-             [{:key "Alt-Enter"
-               :run (fn eval-doc [editor-view]
-                      (on-eval-doc (.. editor-view -state -doc toString)))}
-              {:key "Mod-Enter"
-               :shift (fn eval-top-level-form [editor-view]
-                        (eval-region* eval-region/top-level-string on-eval-expr (.-state editor-view)))
-               :run (fn eval-form-at-cursor [editor-view]
-                      (eval-region* eval-region/cursor-node-string on-eval-expr (.-state editor-view)))}]))])
+            (clj->js
+             (cond-> []
+               on-eval-doc
+               (conj {:key "Alt-Enter"
+                      :run (fn eval-doc [editor-view]
+                             (on-eval-doc (.. editor-view -state -doc toString)))})
+               on-eval-expr
+               (conj {:key "Mod-Enter"
+                      :shift (fn eval-top-level-form [editor-view]
+                               (eval-region* eval-region/top-level-string on-eval-expr (.-state editor-view)))
+                      :run (fn eval-form-at-cursor [editor-view]
+                             (eval-region* eval-region/cursor-node-string on-eval-expr (.-state editor-view)))}))))])
 
 (defn make-view [state parent]
   (EditorView. (j/obj :state state :parent parent)))
