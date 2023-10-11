@@ -120,10 +120,11 @@
     (eval-fn code-str))
   true)
 
-(defn on-change-ext [{:keys [on-change on-change-selection]}]
+(defn on-change-ext [{:keys [on-change on-change-doc on-change-selection]}]
   (.. EditorState -transactionExtender
       (of (fn [^js tr]
-            (when (and on-change (.-docChanged tr)) (on-change tr))
+            (when on-change (on-change tr))
+            (when (and on-change-doc (.-docChanged tr)) (on-change-doc tr))
             (when (and on-change-selection (.-selection tr)) (on-change-selection tr))
             #js {}))))
 
